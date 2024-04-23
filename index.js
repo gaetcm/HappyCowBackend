@@ -21,15 +21,20 @@ app.get("/restaurants", cors(), async (req, res) => {
   }
 });
 
+// Requête resto par ID
 app.get("/restaurants/:id", cors(), async (req, res) => {
-  const id = req.params.id;
+  const id = parseInt(req.params.id);
   try {
     const response = await axios.get(
-      `https://res.cloudinary.com/lereacteur-apollo/raw/upload/v1575242111/10w-full-stack/Scraping/restaurants.json/${id}
-      `
+      "https://res.cloudinary.com/lereacteur-apollo/raw/upload/v1575242111/10w-full-stack/Scraping/restaurants.json"
     );
-    console.log(response.data);
-    res.json(response.data);
+    const restaurant = response.data.find(
+      (restaurant) => restaurant.placeId === id
+    );
+    if (!restaurant) {
+      return res.status(404).json({ message: "Restaurant not found" });
+    }
+    res.json(restaurant);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
